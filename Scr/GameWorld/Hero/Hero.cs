@@ -5,7 +5,7 @@ using JumpRun.Scr.Visuals;
 
 namespace JumpRun.Scr.GameWorld.Hero
 {
-    public class Hero : KinematicBody2D
+    public class Hero : KinematicPlatformer, IHero
     {
         [Export]
         private PackedScene psGlovjectile = null;
@@ -14,9 +14,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         private HeroSprite heroSprite;
         private const float JumpSpeed = 220, MoveAcceleration = 1000, Friction = 700, OverFriction = 450, MaxSpeed = 120,
         GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f, SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f;
-        private Vector2 momentum = new Vector2();
         private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false;
-        private float airTime = 0;
 
         public void ApplyCenteredPulse(Vector2 pulse)
         {
@@ -26,6 +24,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         public override void _Ready()
         {
             heroSprite = GetNode<HeroSprite>(npHeroSprite);
+            Connect(nameof(JustLanded), this, nameof(OnJustLanded));
         }
 
         public override void _Process(float delta)
@@ -35,11 +34,8 @@ namespace JumpRun.Scr.GameWorld.Hero
 
         public override void _PhysicsProcess(float delta)
         {
-            MoveAndSlide(momentum, new Vector2(0, -1));
-            if (IsOnCeiling())
-            {
-                momentum.y = Mathf.Max(0, momentum.y);
-            }
+            base._PhysicsProcess(delta);
+
             if (IsOnWall())
             {
                 if (isSpinning)
@@ -52,30 +48,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                 }
             }
             bool isOnFloor = IsOnFloor();
-            //Gravity
-            if (!isOnFloor)
-            {
-                airTime += delta;
-                momentum.y += GeneralConstants.Gravity * delta * (isSpinning ? 0.5f : 1);
-            }
-            else
-            {
-                if (airTime > 0 && isStomping)
-                {
-                    isStomping = false;
-                    momentum.y *= -StompRicochet;
-                    isSpinning = true;
-                }
-                else
-                {
-                    didJump = false;
-                    didStop = false;
-                    didPunch = false;
-                    isSpinning = false;
-                    airTime = 0;
-                    momentum.y = Mathf.Min(0, momentum.y);
-                }
-            }
+
             //Jumping/Punching
             if (Input.IsActionJustPressed("gm_jump"))
             {
@@ -93,15 +66,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                         Glovjectile glove = psGlovjectile.Instance<Glovjectile>();
                         GetParent().AddChild(glove);
                         glove.Position = Position + new Vector2(0, 24);
-                        glove.Init(this);
                         didPunch = true;
-                        DampedSpringJoint2D springJoint = new DampedSpringJoint2D();
-                        springJoint.Length = 30;
-                        springJoint.RestLength = 8;
-                        springJoint.NodeA = GetPath();
-                        springJoint.NodeB = glove.GetPath();
-                        AddChild(springJoint);
-
                     }
                 }
             }
@@ -122,20 +87,25 @@ namespace JumpRun.Scr.GameWorld.Hero
                     }
                 }
             }
+            gravityMultiplier = (isSpinning ? 0.5f : 1);
             //Horizontal Movement
             float moveDir = Input.GetAxis("gm_left", "gm_right");
             momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
-            if (isOnFloor)
-            {
-                momentum.x = Util.CalculateFriction(momentum.x, 0, Friction * delta);
-
-            }
-            if (Mathf.Abs(momentum.x) > MaxSpeed)
-            {
-                momentum.x = Util.CalculateFriction(momentum.x, 0, Mathf.Abs(momentum.x) / MaxSpeed * OverFriction * delta);
-            }
-
             heroSprite.Animation = isSpinning ? "Spin" : "Idle";
+        }
+
+        public void OnJustLanded()
+        {
+            if (isStomping)
+            {
+                isStomping = false;
+                momentum.y *= -StompRicochet;
+                isSpinning = true;
+            }
+            didJump = false;
+            didStop = false;
+            didPunch = false;
+            isSpinning = false;
         }
     }
 }
