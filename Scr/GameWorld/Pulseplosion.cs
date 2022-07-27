@@ -35,7 +35,7 @@ namespace JumpRun.Scr.GameWorld
         private void OnBodyEntered(Node body)
         {
             if (pushedNodes.Contains(body)) { return; }
-            if (body is Hero hero)
+            if (body is Hero.Hero hero)
             {
                 Vector2 direction = GlobalPosition.DirectionTo(hero.GlobalPosition);
                 float distance = GlobalPosition.DistanceTo(hero.GlobalPosition);

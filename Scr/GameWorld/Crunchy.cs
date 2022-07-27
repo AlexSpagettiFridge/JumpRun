@@ -26,7 +26,7 @@ namespace JumpRun.Scr.GameWorld
 
         private void OnBodyEntered(Node body)
         {
-            if (body is Hero)
+            if (body is IHero)
             {
                 Node2D particles = psParticles.Instance<Node2D>();
                 particles.Position = Position;

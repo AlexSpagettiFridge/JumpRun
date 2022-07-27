@@ -11,7 +11,6 @@ namespace JumpRunPlugin
 #if TOOLS
         public override void _Input(InputEvent @event)
         {
-            GD.Print("Handling Putput");
             if (@event is InputEventMouseButton inputEventMouseButton)
             {
                 if (inputEventMouseButton.ButtonIndex == 1 && inputEventMouseButton.Pressed)
