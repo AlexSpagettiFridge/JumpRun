@@ -1,0 +1,26 @@
+[gd_scene format=2]
+
+[node name="MainMenu" type="CenterContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="."]
+margin_left = 454.0
+margin_top = 281.0
+margin_right = 569.0
+margin_bottom = 319.0
+alignment = 1
+
+[node name="Label" type="Label" parent="VBox"]
+margin_right = 115.0
+margin_bottom = 14.0
+text = "Watcha gonna do"
+align = 1
+
+[node name="Button" type="Button" parent="VBox"]
+margin_top = 18.0
+margin_right = 115.0
+margin_bottom = 38.0
+text = "Edit Camera Rail"

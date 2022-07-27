@@ -3,7 +3,7 @@ using Godot;
 using JumpRun.Scr.Misc;
 using JumpRun.Scr.Visuals;
 
-namespace JumpRun.Scr.GameWorld
+namespace JumpRun.Scr.GameWorld.Hero
 {
     public class Hero : KinematicBody2D
     {
@@ -12,8 +12,8 @@ namespace JumpRun.Scr.GameWorld
         [Export]
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
-        private const float JumpSpeed = 440, MoveAcceleration = 2000, Friction = 1400, OverFriction = 700, MaxSpeed = 240,
-        GloveHop = 220, CoyoteTime = 0.1f, AirControl = 0.5f, SpinControl = 0.1f, StompSpeed = 880, StompRicochet = 0.33f;
+        private const float JumpSpeed = 220, MoveAcceleration = 1000, Friction = 700, OverFriction = 450, MaxSpeed = 120,
+        GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f, SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f;
         private Vector2 momentum = new Vector2();
         private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false;
         private float airTime = 0;

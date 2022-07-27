@@ -6,7 +6,7 @@ namespace JumpRun.Scr.Visuals
     [Tool]
     public class HeroSprite : AnimatedSprite
     {
-        private const float lookMax = 4;
+        private const float lookMax = 2;
         private List<string> includesEyes = new List<string> { "Idle" };
         [Export]
         public Vector2 LookDirection

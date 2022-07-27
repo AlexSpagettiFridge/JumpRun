@@ -39,7 +39,7 @@ namespace JumpRun.Scr.GameWorld
             {
                 Vector2 direction = GlobalPosition.DirectionTo(hero.GlobalPosition);
                 float distance = GlobalPosition.DistanceTo(hero.GlobalPosition);
-                hero.ApplyCenteredPulse(direction * (220 - distance * 3) * new Vector2(3f, 1));
+                hero.ApplyCenteredPulse(direction * (110 - distance * 1.5f) * new Vector2(3f, 1));
             }
             pushedNodes.Add(body);
         }

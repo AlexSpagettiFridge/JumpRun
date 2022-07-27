@@ -14,6 +14,10 @@ config/name="JumpRun"
 run/main_scene="res://Scenes/GameScene.tscn"
 config/icon="res://icon.png"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/JumpRunPlugin/plugin.cfg" )
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true
