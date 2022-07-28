@@ -12,8 +12,8 @@ namespace JumpRun.Scr.GameWorld.Hero
         [Export]
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
-        private const float JumpSpeed = 220, MoveAcceleration = 1000, Friction = 700, OverFriction = 450, MaxSpeed = 120,
-        GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f, SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f;
+        private const float JumpSpeed = 220, MoveAcceleration = 1000, GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f;
         private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false;
 
         public void ApplyCenteredPulse(Vector2 pulse)
@@ -25,11 +25,14 @@ namespace JumpRun.Scr.GameWorld.Hero
         {
             heroSprite = GetNode<HeroSprite>(npHeroSprite);
             Connect(nameof(JustLanded), this, nameof(OnJustLanded));
+            maxSpeed = 120;
+            friction = 700;
+            overFriction = 450;
         }
 
         public override void _Process(float delta)
         {
-            heroSprite.LookDirection = momentum / (MaxSpeed * 1.2f);
+            heroSprite.LookDirection = momentum / (maxSpeed * 1.2f);
         }
 
         public override void _PhysicsProcess(float delta)
