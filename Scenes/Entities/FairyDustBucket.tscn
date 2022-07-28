@@ -42,7 +42,7 @@ particles_anim_loop = false
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 6 )
-frame = 1
+frame = 3
 playing = true
 
 [node name="Particles2D" type="Particles2D" parent="."]

@@ -96,16 +96,16 @@ namespace JumpRun.Scr.GameWorld.Hero
 
         public void OnJustLanded()
         {
+            didJump = false;
+            didStop = false;
+            didPunch = false;
+            isSpinning = false;
             if (isStomping)
             {
                 isStomping = false;
                 momentum.y *= -StompRicochet;
                 isSpinning = true;
             }
-            didJump = false;
-            didStop = false;
-            didPunch = false;
-            isSpinning = false;
         }
     }
 }

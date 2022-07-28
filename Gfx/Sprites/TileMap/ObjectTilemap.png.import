@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/CrunchyOutline.png-cd919ccbc7c3bcff72d746a219656dc5.stex"
+path="res://.import/ObjectTilemap.png-e526e9846b5a84163c31aa04017d59b8.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Gfx/Sprites/Crunchy/CrunchyOutline.png"
-dest_files=[ "res://.import/CrunchyOutline.png-cd919ccbc7c3bcff72d746a219656dc5.stex" ]
+source_file="res://Gfx/Sprites/TileMap/ObjectTilemap.png"
+dest_files=[ "res://.import/ObjectTilemap.png-e526e9846b5a84163c31aa04017d59b8.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
