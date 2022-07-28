@@ -27,7 +27,11 @@ namespace JumpRun.Scr.GameWorld.Hero
             base._PhysicsProcess(delta);
             if (IsOnWall())
             {
-                momentum.x = 0;
+                momentum.x = -momentum.x;
+            }
+            if (IsOnCeiling())
+            {
+                momentum.y = -momentum.x;
             }
         }
 
