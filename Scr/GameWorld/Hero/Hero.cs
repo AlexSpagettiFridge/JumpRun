@@ -13,8 +13,8 @@ namespace JumpRun.Scr.GameWorld.Hero
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
         private const float JumpSpeed = 220, MoveAcceleration = 1000, GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f
-        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f;
-        private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false;
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 1000, UnduckHop = 50;
+        private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false, isDucking = false;
 
         public void ApplyCenteredPulse(Vector2 pulse)
         {
@@ -38,6 +38,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         public override void _PhysicsProcess(float delta)
         {
             base._PhysicsProcess(delta);
+            float moveDir = Input.GetAxis("gm_left", "gm_right");
 
             if (IsOnWall())
             {
@@ -55,21 +56,31 @@ namespace JumpRun.Scr.GameWorld.Hero
             //Jumping/Punching
             if (Input.IsActionJustPressed("gm_jump"))
             {
-                if (!didJump && airTime <= CoyoteTime)
+                if (isDucking)
                 {
-                    momentum.y = -JumpSpeed;
-                    didJump = true;
+                    if (momentum.x == 0)
+                    {
+                        momentum.x = moveDir * DuckDash;
+                    }
                 }
                 else
                 {
-                    if (!didPunch)
+                    if (!didJump && airTime <= CoyoteTime)
                     {
-                        isSpinning = true;
-                        momentum.y = Mathf.Min(-GloveHop, momentum.y);
-                        Glovjectile glove = psGlovjectile.Instance<Glovjectile>();
-                        GetParent().AddChild(glove);
-                        glove.Position = Position + new Vector2(0, 24);
-                        didPunch = true;
+                        momentum.y = -JumpSpeed;
+                        didJump = true;
+                    }
+                    else
+                    {
+                        if (!didPunch)
+                        {
+                            isSpinning = true;
+                            momentum.y = Mathf.Min(-GloveHop, momentum.y);
+                            Glovjectile glove = psGlovjectile.Instance<Glovjectile>();
+                            GetParent().AddChild(glove);
+                            glove.Position = Position + new Vector2(0, 24);
+                            didPunch = true;
+                        }
                     }
                 }
             }
@@ -89,12 +100,25 @@ namespace JumpRun.Scr.GameWorld.Hero
                         momentum.y = Mathf.Max(momentum.y, StompSpeed);
                     }
                 }
+                else
+                {
+                    MoveAndCollide(new Vector2(0, -4));
+                    isDucking = true;
+                }
+            }
+            if (Input.IsActionJustReleased("gm_duck") && isDucking)
+            {
+                isDucking = false;
+                if (isOnFloor) { momentum.y = -UnduckHop; }
             }
             gravityMultiplier = (isSpinning ? 0.5f : 1);
             //Horizontal Movement
-            float moveDir = Input.GetAxis("gm_left", "gm_right");
-            momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
+            if (!isDucking)
+            {
+                momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
+            }
             heroSprite.Animation = isSpinning ? "Spin" : "Idle";
+            heroSprite.IsDucking = isDucking;
         }
 
         public void OnJustLanded()

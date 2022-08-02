@@ -8,6 +8,10 @@ namespace JumpRun.Scr.Visuals
     {
         private const float lookMax = 2;
         private List<string> includesEyes = new List<string> { "Idle" };
+        private bool isDucking = false;
+
+        public bool IsDucking { get => isDucking; set => isDucking = value; }
+
         [Export]
         public Vector2 LookDirection
         {
@@ -29,12 +33,13 @@ namespace JumpRun.Scr.Visuals
         {
             Vector2 pupilOffset = new Vector2(Mathf.Round(lookDirection.x * lookMax), Mathf.Round(lookDirection.y * lookMax));
             Vector2 offCenter = -Frames.GetFrame(eyeStateName, 0).GetSize() / 2;
-            if (includesEyes.Contains(Animation))
+            if (includesEyes.Contains(Animation) && !isDucking)
             {
                 DrawTexture(Frames.GetFrame(eyeStateName, 0), offCenter, Modulate);
                 DrawTexture(Frames.GetFrame(eyeStateName, 1), offCenter + pupilOffset, Modulate);
             }
             Vector2 offCenter2 = -Frames.GetFrame(Animation, 0).GetSize() / 2;
+            if (isDucking) { offCenter2.y += 5; }
             DrawTexture(Frames.GetFrame(Animation, Frame), offCenter2);
         }
     }
