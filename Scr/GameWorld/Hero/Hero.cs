@@ -13,7 +13,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
         private const float JumpSpeed = 220, MoveAcceleration = 1000, GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f
-        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 1000, UnduckHop = 50;
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50;
         private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false, isDucking = false;
 
         private static bool initialized = false;
