@@ -14,6 +14,8 @@ region = Rect2( 0, 0, 24, 24 )
 
 [node name="CameraRail" type="Node2D" parent="."]
 script = ExtResource( 1 )
+npCamera = NodePath("../Camera2D")
+npFollowNode = NodePath("../Hero")
 
 [node name="BackgroundTilemap" type="TileMap" parent="."]
 z_index = -10
@@ -38,7 +40,7 @@ script = ExtResource( 5 )
 position = Vector2( 88, 66 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 202, 94 )
+position = Vector2( 88, 66 )
 current = true
 zoom = Vector2( 0.4, 0.4 )
 

@@ -16,9 +16,19 @@ namespace JumpRun.Scr.GameWorld.Hero
         , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 1000, UnduckHop = 50;
         private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false, isDucking = false;
 
+        private static bool initialized = false;
+        private HeroReference heroReference;
+        public HeroReference HRef { get => heroReference; set => heroReference = value; }
+        public event EventHandler<RegisterCurrentHeroArgs> SetNewCurrentHero;
+
+        public Hero()
+        {
+            if (!initialized) { heroReference = new HeroReference(this); }
+        }
+
         public void ApplyCenteredPulse(Vector2 pulse)
         {
-            momentum += pulse;
+            Momentum += pulse;
         }
 
         public override void _Ready()
@@ -32,7 +42,7 @@ namespace JumpRun.Scr.GameWorld.Hero
 
         public override void _Process(float delta)
         {
-            heroSprite.LookDirection = momentum / (maxSpeed * 1.2f);
+            heroSprite.LookDirection = Momentum / (maxSpeed * 1.2f);
         }
 
         public override void _PhysicsProcess(float delta)
@@ -44,11 +54,11 @@ namespace JumpRun.Scr.GameWorld.Hero
             {
                 if (isSpinning)
                 {
-                    momentum.x *= -0.8f;
+                    Momentum.x *= -0.8f;
                 }
                 else
                 {
-                    momentum.x = 0;
+                    Momentum.x = 0;
                 }
             }
             bool isOnFloor = IsOnFloor();
@@ -58,16 +68,16 @@ namespace JumpRun.Scr.GameWorld.Hero
             {
                 if (isDucking)
                 {
-                    if (momentum.x == 0)
+                    if (Momentum.x == 0)
                     {
-                        momentum.x = moveDir * DuckDash;
+                        Momentum.x = moveDir * DuckDash;
                     }
                 }
                 else
                 {
                     if (!didJump && airTime <= CoyoteTime)
                     {
-                        momentum.y = -JumpSpeed;
+                        Momentum.y = -JumpSpeed;
                         didJump = true;
                     }
                     else
@@ -75,7 +85,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                         if (!didPunch)
                         {
                             isSpinning = true;
-                            momentum.y = Mathf.Min(-GloveHop, momentum.y);
+                            Momentum.y = Mathf.Min(-GloveHop, Momentum.y);
                             Glovjectile glove = psGlovjectile.Instance<Glovjectile>();
                             GetParent().AddChild(glove);
                             glove.Position = Position + new Vector2(0, 24);
@@ -84,9 +94,9 @@ namespace JumpRun.Scr.GameWorld.Hero
                     }
                 }
             }
-            if (Input.IsActionJustReleased("gm_jump") && momentum.y < 0 && !didStop)
+            if (Input.IsActionJustReleased("gm_jump") && Momentum.y < 0 && !didStop)
             {
-                momentum.y /= 2;
+                Momentum.y /= 2;
                 didStop = true;
             }
             //Stomping/Ducking
@@ -97,7 +107,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                     if (!isSpinning)
                     {
                         isStomping = true;
-                        momentum.y = Mathf.Max(momentum.y, StompSpeed);
+                        Momentum.y = Mathf.Max(Momentum.y, StompSpeed);
                     }
                 }
                 else
@@ -109,13 +119,13 @@ namespace JumpRun.Scr.GameWorld.Hero
             if (Input.IsActionJustReleased("gm_duck") && isDucking)
             {
                 isDucking = false;
-                if (isOnFloor) { momentum.y = -UnduckHop; }
+                if (isOnFloor) { Momentum.y = -UnduckHop; }
             }
             gravityMultiplier = (isSpinning ? 0.5f : 1);
             //Horizontal Movement
             if (!isDucking)
             {
-                momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
+                Momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
             }
             heroSprite.Animation = isSpinning ? "Spin" : "Idle";
             heroSprite.IsDucking = isDucking;
@@ -130,9 +140,11 @@ namespace JumpRun.Scr.GameWorld.Hero
             if (isStomping)
             {
                 isStomping = false;
-                momentum.y *= -StompRicochet;
+                Momentum.y *= -StompRicochet;
                 isSpinning = true;
             }
         }
+
+
     }
 }

@@ -16,9 +16,9 @@ namespace JumpRun.Scr.GameWorld.Objects
             if (!active) { return; }
             if (body is IHero)
             {
-                if (body is KinematicPlatformer hero)
+                if (body is IHero hero)
                 {
-                    hero.ChangeInto(psHeroSpaceShip.Instance<HeroSpaceShip>());
+                    hero.HRef.ChangeHero(psHeroSpaceShip.Instance<HeroSpaceShip>());
                     GetNode<Particles2D>(npParticles).Emitting = false;
                     active = false;
                     GetNode<Timer>(npTimer).Start();

@@ -1,12 +1,33 @@
 using System.Collections.Generic;
 using Godot;
+using JumpRun.Scr.GameWorld;
+using JumpRun.Scr.GameWorld.Hero;
 
 namespace JumpRunPlugin
 {
     [Tool]
     public class CameraRail : Node2D
     {
-        private List<Line> lines = new List<Line>();
+        [Export]
+        private NodePath npCamera, npFollowNode;
+        private Camera2D camera;
+        private Node2D followNode;
+        private List<Rect2> areas = new List<Rect2>();
+
+        public override void _Ready()
+        {
+            camera = GetNode<Camera2D>(npCamera);
+            followNode = GetNode<Node2D>(npFollowNode);
+            if (followNode is IHero hero)
+            {
+                hero.HRef.NewCurrentHeroSet += OnHeroChanged;
+            }
+        }
+
+        public override void _Process(float delta)
+        {
+            camera.Position = followNode.Position;
+        }
 
 #if TOOLS
         public override void _Input(InputEvent @event)
@@ -27,18 +48,16 @@ namespace JumpRunPlugin
             if (Engine.EditorHint)
             {
                 Color color = new Color(0, 0, 1, 0.75f);
-                foreach (Line line in lines)
+                foreach (Rect2 rect in areas)
                 {
-                    DrawCircle(line.Start, 10, color);
-                    DrawLine(line.Start, line.End, color, 4);
+                    DrawRect(rect, color, false, 2);
                 }
             }
         }
 
-        private struct Line
+        public void OnHeroChanged(object sender, RegisterCurrentHeroArgs args)
         {
-            public Vector2 Start;
-            public Vector2 End;
+            followNode = (Node2D)args.NewCurrentHero;
         }
     }
 }

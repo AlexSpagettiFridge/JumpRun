@@ -8,6 +8,9 @@ namespace JumpRun.Scr.GameWorld.Hero
         private PackedScene psHero;
         private const float angularSpeed = 75, boostSpeed = 240;
 
+        private HeroReference heroReference;
+        public HeroReference HRef { get => heroReference; set => heroReference = value; }
+
         public override void _Ready()
         {
             gravityMultiplier = 0.25f;
@@ -22,22 +25,22 @@ namespace JumpRun.Scr.GameWorld.Hero
             Rotate(Mathf.Deg2Rad(rotationInput * angularSpeed * delta));
             if (Input.IsActionPressed("gm_jump"))
             {
-                momentum += new Vector2(0, -boostSpeed * delta).Rotated(Rotation);
+                Momentum += new Vector2(0, -boostSpeed * delta).Rotated(Rotation);
             }
             base._PhysicsProcess(delta);
             if (IsOnWall())
             {
-                momentum.x = -momentum.x;
+                Momentum.x = -Momentum.x;
             }
             if (IsOnCeiling())
             {
-                momentum.y = -momentum.x;
+                Momentum.y = -Momentum.x;
             }
         }
 
         private void OnTimerTimout()
         {
-            ChangeInto(psHero.Instance<Node2D>());
+            HRef.ChangeHero(psHero.Instance<Hero>());
         }
     }
 }
