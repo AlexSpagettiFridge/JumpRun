@@ -23,11 +23,9 @@ cast_to = Vector2( 0, 300 )
 script = ExtResource( 6 )
 shadowTexture = ExtResource( 4 )
 
-[node name="Sprite" type="AnimatedSprite" parent="."]
-frames = ExtResource( 3 )
-animation = "Idle"
-playing = true
+[node name="Sprite" type="Node2D" parent="."]
 script = ExtResource( 2 )
+frames = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 3 )
