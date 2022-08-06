@@ -16,17 +16,23 @@ namespace JumpRunPlugin
 
         public override void _Ready()
         {
-            camera = GetNode<Camera2D>(npCamera);
-            followNode = GetNode<Node2D>(npFollowNode);
-            if (followNode is IHero hero)
+            if (!Engine.EditorHint)
             {
-                hero.HRef.NewCurrentHeroSet += OnHeroChanged;
+                camera = GetNode<Camera2D>(npCamera);
+                followNode = GetNode<Node2D>(npFollowNode);
+                if (followNode is IHero hero)
+                {
+                    hero.HRef.NewCurrentHeroSet += OnHeroChanged;
+                }
             }
         }
 
         public override void _Process(float delta)
         {
-            camera.Position = followNode.Position;
+            if (!Engine.EditorHint)
+            {
+                camera.Position = followNode.Position;
+            }
         }
 
 #if TOOLS
