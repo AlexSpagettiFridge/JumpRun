@@ -10,6 +10,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         private const float angularSpeed = 550, boostSpeed = 300, crashMultiplier = 0.02f, boostCost = 2;
         private FuelInfo fuelInfo;
         public float Fuel = 10;
+        private Vector2 lastVelocity;
 
         private HeroReference heroReference;
         public HeroReference HRef { get => heroReference; set => heroReference = value; }
@@ -35,12 +36,13 @@ namespace JumpRun.Scr.GameWorld.Hero
                 LinearVelocity += new Vector2(0, -boostSpeed * delta).Rotated(Rotation);
                 Fuel -= delta * boostCost;
             }
+            lastVelocity = LinearVelocity;
         }
 
         public void OnBodyEntered(Node body)
         {
-            Fuel -= LinearVelocity.Length() * crashMultiplier;
-            GD.Print($"Crash -> lost {LinearVelocity.Length() * crashMultiplier} fuel");
+            Fuel -= lastVelocity.Length() * crashMultiplier;
+            GD.Print($"Crash -> lost {lastVelocity.Length() * crashMultiplier} fuel");
         }
 
         public override void _ExitTree()
