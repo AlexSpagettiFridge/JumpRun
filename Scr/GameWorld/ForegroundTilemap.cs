@@ -10,6 +10,7 @@ namespace JumpRun.Scr.GameWorld
 
         public override void _Ready()
         {
+            int crunchies = 0;
             foreach (Vector2 tileCoords in GetUsedCells())
             {
                 int cellId = GetCell((int)tileCoords.x, (int)tileCoords.y);
@@ -20,6 +21,7 @@ namespace JumpRun.Scr.GameWorld
                         Node2D crunchy = psCrunchy.Instance<Node2D>();
                         crunchy.Position = tileCoords * 16 + new Vector2(8, 8);
                         AddChild(crunchy);
+                        crunchies++;
                         break;
                     case bucketId:
                         Node2D bucket = psFairyBucket.Instance<Node2D>();
@@ -35,6 +37,12 @@ namespace JumpRun.Scr.GameWorld
                     SetCell((int)tileCoords.x, (int)tileCoords.y, -1);
                 }
             }
+            CallDeferred(nameof(AfterReady),new object[]{crunchies});
+        }
+
+        public void AfterReady(int crunchies)
+        {
+            GameController.Current.SetLevelCrunchyAmount(crunchies);
         }
     }
 }

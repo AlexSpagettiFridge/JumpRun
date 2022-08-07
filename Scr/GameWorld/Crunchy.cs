@@ -28,6 +28,7 @@ namespace JumpRun.Scr.GameWorld
         {
             if (body is IHero)
             {
+                GameController.Current.OnCrunchyCollected();
                 Node2D particles = psParticles.Instance<Node2D>();
                 particles.Position = Position;
                 GetParent().AddChild(particles);
