@@ -42,7 +42,6 @@ namespace JumpRun.Scr.GameWorld.Hero
         public void OnBodyEntered(Node body)
         {
             Fuel -= lastVelocity.Length() * crashMultiplier;
-            GD.Print($"Crash -> lost {lastVelocity.Length() * crashMultiplier} fuel");
         }
 
         public override void _ExitTree()
