@@ -18,11 +18,32 @@ namespace JumpRun.Scr.GameWorld.Hero
         {
             Node2D currentNode = (Node2D)current;
             ((Node2D)newForm).GlobalPosition = currentNode.GlobalPosition;
-            if (keepMomentum && newForm is KinematicPlatformer kinematicPlatformer && current is KinematicPlatformer kinCurrent)
+            if (keepMomentum)
             {
-                kinematicPlatformer.Momentum = kinCurrent.Momentum;
+                Vector2 momentum = new Vector2();
+                if (current is KinematicPlatformer kinematicPlatformer)
+                {
+                    momentum = kinematicPlatformer.Momentum;
+                }
+                if (current is RigidBody2D rigidBody)
+                {
+                    momentum = rigidBody.LinearVelocity;
+                }
+
+                if (momentum != Vector2.Zero)
+                {
+                    if (newForm is KinematicPlatformer newKinematicPlatformer)
+                    {
+                        newKinematicPlatformer.Momentum = momentum;
+                    }
+                    if (newForm is RigidBody2D newRigidBody)
+                    {
+                        newRigidBody.LinearVelocity = momentum;
+                    }
+                }
+
             }
-            currentNode.GetParent().AddChild((Node2D)newForm);
+            GameController.Current.AddChildDeferred((Node2D)newForm);
             currentNode.QueueFree();
             current = newForm;
             current.HRef = this;

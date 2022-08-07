@@ -1,46 +1,51 @@
 using Godot;
+using JumpRun.Scr.Interface.Gui;
 
 namespace JumpRun.Scr.GameWorld.Hero
 {
-    public class HeroSpaceShip : KinematicPlatformer, IHero
+    public class HeroSpaceShip : RigidBody2D, IHero
     {
         [Export]
-        private PackedScene psHero;
-        private const float angularSpeed = 75, boostSpeed = 240;
+        private PackedScene psHero, psFuelGauge;
+        private const float angularSpeed = 550, boostSpeed = 300, crashMultiplier = 0.02f, boostCost = 2;
+        private FuelInfo fuelInfo;
+        public float Fuel = 10;
 
         private HeroReference heroReference;
         public HeroReference HRef { get => heroReference; set => heroReference = value; }
 
         public override void _Ready()
         {
-            gravityMultiplier = 0.25f;
-            maxSpeed = 90;
-            friction = 800;
-            overFriction = 900;
+            fuelInfo = psFuelGauge.Instance<FuelInfo>();
+            fuelInfo.TrackedHero = this;
+            GameController.Current.Gui.AddChild(fuelInfo);
         }
 
         public override void _PhysicsProcess(float delta)
         {
+            if (Fuel <= 0)
+            {
+                heroReference.ChangeHero(psHero.Instance<Hero>());
+                return;
+            }
             float rotationInput = Input.GetAxis("gm_left", "gm_right");
-            Rotate(Mathf.Deg2Rad(rotationInput * angularSpeed * delta));
+            AngularVelocity += Mathf.Deg2Rad(rotationInput * angularSpeed * delta);
             if (Input.IsActionPressed("gm_jump"))
             {
-                Momentum += new Vector2(0, -boostSpeed * delta).Rotated(Rotation);
-            }
-            base._PhysicsProcess(delta);
-            if (IsOnWall())
-            {
-                Momentum.x = -Momentum.x;
-            }
-            if (IsOnCeiling())
-            {
-                Momentum.y = -Momentum.x;
+                LinearVelocity += new Vector2(0, -boostSpeed * delta).Rotated(Rotation);
+                Fuel -= delta * boostCost;
             }
         }
 
-        private void OnTimerTimout()
+        public void OnBodyEntered(Node body)
         {
-            HRef.ChangeHero(psHero.Instance<Hero>());
+            Fuel -= LinearVelocity.Length() * crashMultiplier;
+            GD.Print($"Crash -> lost {LinearVelocity.Length() * crashMultiplier} fuel");
+        }
+
+        public override void _ExitTree()
+        {
+            fuelInfo.QueueFree();
         }
     }
 }

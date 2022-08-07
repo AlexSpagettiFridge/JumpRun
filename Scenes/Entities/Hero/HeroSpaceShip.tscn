@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Gfx/Sprites/Hero/Hats/Tophat.png" type="Texture" id=1]
 [ext_resource path="res://Gfx/Sprites/Objects/FairyDust/FairyDustStars.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Gfx/Sprites/Objects/FairyDust/FairyDustBlast.png" type="Texture" id=4]
 [ext_resource path="res://Scr/GameWorld/Hero/HeroSpaceShip.cs" type="Script" id=5]
 [ext_resource path="res://Scenes/Entities/Hero/Hero.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Scenes/Gui/FuelInfo.tscn" type="PackedScene" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 5, 6 )
@@ -16,9 +17,14 @@ particles_anim_h_frames = 5
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
-[node name="HeroSpaceShip" type="KinematicBody2D"]
+[node name="HeroSpaceShip" type="RigidBody2D"]
+gravity_scale = 0.2
+contacts_reported = 1
+contact_monitor = true
+angular_damp = 5.0
 script = ExtResource( 5 )
 psHero = ExtResource( 6 )
+psFuelGauge = ExtResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )
@@ -39,8 +45,4 @@ texture = ExtResource( 2 )
 position = Vector2( 0, 10 )
 texture = ExtResource( 4 )
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 10.0
-autostart = true
-
-[connection signal="timeout" from="Timer" to="." method="OnTimerTimout"]
+[connection signal="body_entered" from="." to="." method="OnBodyEntered"]
