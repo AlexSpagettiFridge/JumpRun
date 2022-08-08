@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Gfx/Sprites/Crunchy/Crunchy.png" type="Texture" id=1]
-[ext_resource path="res://Scr/GameWorld/Crunchy.cs" type="Script" id=2]
+[ext_resource path="res://Scr/GameWorld/Objects/Crunchy.cs" type="Script" id=2]
 [ext_resource path="res://Scenes/Effects/CrunchParticles.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CircleShape2D" id=1]

@@ -2,7 +2,7 @@ using System;
 using Godot;
 using JumpRun.Scr.GameWorld.Hero;
 
-namespace JumpRun.Scr.GameWorld
+namespace JumpRun.Scr.GameWorld.Objects
 {
     public class Crunchy : Area2D
     {
