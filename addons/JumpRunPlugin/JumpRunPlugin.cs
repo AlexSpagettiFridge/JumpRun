@@ -9,39 +9,83 @@ namespace JumpRunPlugin
     {
         public override string GetPluginName() => "JumpRunPlugin";
 
-        private PluginMainWindow mainWindow;
         private CamerarailInspectorPlugin camerarailInspectorPlugin;
+        private Script cameraRailScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/CameraRail.cs");
+        private EditState currentEditState = EditState.None;
+        private Vector2 railRectStart;
+        private CameraRail editedRail = null;
 
         public override void _EnterTree()
         {
             Script cameraRailScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/CameraRail.cs");
             Texture cameraRailIcon = ResourceLoader.Load<Texture>("res://Gfx/Icons/CameraRailIcon.svg");
-            camerarailInspectorPlugin = new CamerarailInspectorPlugin();
+            camerarailInspectorPlugin = new CamerarailInspectorPlugin(this);
             AddInspectorPlugin(camerarailInspectorPlugin);
             AddCustomType("CameraRail", "Node2D", cameraRailScript, cameraRailIcon);
 
-            mainWindow = new PluginMainWindow(GetEditorInterface().GetEditedSceneRoot());
-            GetEditorInterface().GetEditorViewport().AddChild(mainWindow);
-            GetEditorInterface().GetEditorViewport().RectClipContent = true;
-
-            Connect("scene_changed", this, nameof(OnSceneChanged));
             GD.Print("--- JumpRunPlugin Initialized ---");
         }
 
         public override void _ExitTree()
         {
-            mainWindow.QueueFree();
             RemoveInspectorPlugin(camerarailInspectorPlugin);
             RemoveCustomType("CameraRail");
         }
 
-        public override bool HasMainScreen() => true;
+        public override void _Process(float delta)
+        {
+            UpdateOverlays();
+        }
 
         public override Texture GetPluginIcon() => ResourceLoader.Load<Texture>("res://Gfx/Icons/PluginIcon.svg");
 
-        private void OnSceneChanged(Node sceneRoot)
+        public override bool Handles(Object @object) => @object.GetScript() == cameraRailScript;
+
+        public override bool ForwardCanvasGuiInput(InputEvent @event)
         {
-            mainWindow.SceneChangeReset(sceneRoot);
+            if (currentEditState == EditState.None) { return false; }
+            if (@event is InputEventMouseButton eventMouseButton)
+            {
+                if (eventMouseButton.ButtonIndex == 1 && eventMouseButton.Pressed)
+                {
+                    Vector2 gridMousePosition = (editedRail.GetLocalMousePosition() / 16).Floor() * 16;
+                    switch (currentEditState)
+                    {
+                        case EditState.MarkStart:
+                            railRectStart = gridMousePosition;
+                            currentEditState = EditState.DragEnd;
+                            break;
+                        case EditState.DragEnd:
+                            currentEditState = EditState.None;
+                            Edit(editedRail);
+                            editedRail.AddArea(new Rect2(railRectStart, gridMousePosition-railRectStart));
+                            break;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void StartCreatingRect(CameraRail cameraRail)
+        {
+            currentEditState = EditState.MarkStart;
+            editedRail = cameraRail;
+        }
+
+        private enum EditState
+        {
+            None, MarkStart, DragEnd
+        }
+
+        public override void ForwardCanvasDrawOverViewport(Control overlay)
+        {
+            if (currentEditState == EditState.DragEnd)
+            {
+                Color color = new Color(0, 1, 0, 1);
+                Rect2 dragRect = new Rect2(railRectStart, editedRail.GetLocalMousePosition()-railRectStart);
+                overlay.DrawRect(dragRect, color, false);
+            }
         }
     }
 }
