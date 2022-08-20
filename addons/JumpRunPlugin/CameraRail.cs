@@ -17,7 +17,7 @@ namespace JumpRunPlugin
         private Camera2D camera;
         private Node2D followNode;
         private int currentlySelectedAreaId = -1;
-        private int _currentAreaId = -1;
+        private int[] _currentAreaIds = { };
 
         public int CurrentlySelectedAreaId
         {
@@ -29,20 +29,26 @@ namespace JumpRunPlugin
             }
         }
 
-        //TODO: Rewrite for multiple areas
-        private int currentAreaId
+        private int[] currentAreaIds
         {
-            get => _currentAreaId;
+            get => _currentAreaIds;
             set
             {
-                _currentAreaId = value;
-                if (_currentAreaId <= -1) { return; }
-                /*Rect2 currentArea = areas[value];
-                camera.LimitLeft = (int)currentArea.Position.x;
-                camera.LimitTop = (int)currentArea.Position.y;
-                camera.LimitRight = (int)currentArea.End.x;
-                camera.LimitBottom = (int)currentArea.End.y;
-                */
+                _currentAreaIds = value;
+                if (_currentAreaIds.Length == 0) { return; }
+                Rect2 firstArea = GetAreaById(value[0]);
+                camera.LimitLeft = (int)firstArea.Position.x;
+                camera.LimitTop = (int)firstArea.Position.y;
+                camera.LimitRight = (int)firstArea.End.x;
+                camera.LimitBottom = (int)firstArea.End.y;
+                for (int i = 1; i < value.Length; i++)
+                {
+                    Rect2 area = GetAreaById(value[i]);
+                    camera.LimitLeft = Mathf.Min((int)area.Position.x, camera.LimitLeft);
+                    camera.LimitTop = Mathf.Min((int)area.Position.y, camera.LimitTop);
+                    camera.LimitRight = Mathf.Max((int)area.End.x, camera.LimitRight);
+                    camera.LimitBottom = Mathf.Max((int)area.End.y, camera.LimitBottom);
+                }
             }
         }
 
@@ -78,10 +84,7 @@ namespace JumpRunPlugin
                     hero.HRef.NewCurrentHeroSet += OnHeroChanged;
                 }
                 List<int> areaIds = GetFollowNodeAreas();
-                if (areaIds.Count != 0)
-                {
-                    currentAreaId = areaIds[0];
-                }
+                areaIds.CopyTo(currentAreaIds);
             }
 
         }
@@ -91,13 +94,13 @@ namespace JumpRunPlugin
             if (!Engine.EditorHint)
             {
                 camera.Position = followNode.Position;
-                if (currentAreaId < 0) { return; }
-                if (followNode.Position < GetAreaById(currentAreaId).Position || followNode.Position > GetAreaById(currentAreaId).End)
+                foreach (int id in currentAreaIds)
                 {
-                    List<int> areaIds = GetFollowNodeAreas();
-                    if (areaIds.Count != 0)
+                    if (followNode.Position < GetAreaById(id).Position || followNode.Position > GetAreaById(id).End)
                     {
-                        currentAreaId = areaIds[0];
+                        List<int> areaIds = GetFollowNodeAreas();
+                        areaIds.CopyTo(currentAreaIds);
+                        return;
                     }
                 }
             }
@@ -139,7 +142,7 @@ namespace JumpRunPlugin
                 {
                     if (currentlySelectedAreaId == i)
                     {
-                        DrawRect(GetAreaById(i),new Color(1,0,1,0.5f),true);
+                        DrawRect(GetAreaById(i), new Color(1, 0, 1, 0.5f), true);
                     }
                     DrawRect(GetAreaById(i), i == currentlySelectedAreaId ? selectedColor : color, false, 2);
                 }
