@@ -20,6 +20,7 @@ npGui = NodePath("GuiLayer/GuiControl")
 script = ExtResource( 1 )
 npCamera = NodePath("../Camera2D")
 npFollowNode = NodePath("../Hero")
+areas = [ Rect2( -32, -112, 464, 352 ), Rect2( 576, -96, 96, 288 ), Rect2( 432, -16, 128, 96 ), Rect2( 544, -48, 32, 176 ), Rect2( 464, -64, 160, 144 ) ]
 
 [node name="BackgroundTilemap" type="TileMap" parent="."]
 z_index = -10

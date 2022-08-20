@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 using JumpRun.Scr.GameWorld.Hero;
+using Garray = Godot.Collections.Array;
 
 namespace JumpRunPlugin
 {
@@ -12,7 +13,7 @@ namespace JumpRunPlugin
         [Export]
         private NodePath npCamera, npFollowNode;
         [Export]
-        private List<Rect2> areas = new List<Rect2>();
+        private Garray areas = new Garray();
         private Camera2D camera;
         private Node2D followNode;
         private int currentlySelectedAreaId = -1;
@@ -36,11 +37,12 @@ namespace JumpRunPlugin
             {
                 _currentAreaId = value;
                 if (_currentAreaId <= -1) { return; }
-                Rect2 currentArea = areas[value];
+                /*Rect2 currentArea = areas[value];
                 camera.LimitLeft = (int)currentArea.Position.x;
                 camera.LimitTop = (int)currentArea.Position.y;
                 camera.LimitRight = (int)currentArea.End.x;
                 camera.LimitBottom = (int)currentArea.End.y;
+                */
             }
         }
 
@@ -52,11 +54,11 @@ namespace JumpRunPlugin
         }
         internal void ResetAreas()
         {
-            areas = new List<Rect2>();
+            areas = new Garray();
             EmitSignal(nameof(AreasChanged), new object[] { areas });
             Update();
         }
-        internal Rect2 GetAreaById(int id) => areas[id];
+        internal Rect2 GetAreaById(int id) => (Rect2)areas[id];
         internal void RemoveAreaById(int id)
         {
             areas.RemoveAt(id);
@@ -90,7 +92,7 @@ namespace JumpRunPlugin
             {
                 camera.Position = followNode.Position;
                 if (currentAreaId < 0) { return; }
-                if (followNode.Position < areas[currentAreaId].Position || followNode.Position > areas[currentAreaId].End)
+                if (followNode.Position < GetAreaById(currentAreaId).Position || followNode.Position > GetAreaById(currentAreaId).End)
                 {
                     List<int> areaIds = GetFollowNodeAreas();
                     if (areaIds.Count != 0)
@@ -113,7 +115,7 @@ namespace JumpRunPlugin
 
             for (int i = 0; i < areas.Count; i++)
             {
-                if (point >= areas[i].Position && point <= areas[i].End)
+                if (point >= GetAreaById(i).Position && point <= GetAreaById(i).End)
                 {
                     rectIds.Add(i);
                 }
@@ -137,9 +139,9 @@ namespace JumpRunPlugin
                 {
                     if (currentlySelectedAreaId == i)
                     {
-                        DrawRect(areas[i],new Color(1,0,1,0.5f),true);
+                        DrawRect(GetAreaById(i),new Color(1,0,1,0.5f),true);
                     }
-                    DrawRect(areas[i], i == currentlySelectedAreaId ? selectedColor : color, false, 2);
+                    DrawRect(GetAreaById(i), i == currentlySelectedAreaId ? selectedColor : color, false, 2);
                 }
             }
         }
