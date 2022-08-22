@@ -83,26 +83,26 @@ namespace JumpRunPlugin
                 {
                     hero.HRef.NewCurrentHeroSet += OnHeroChanged;
                 }
-                List<int> areaIds = GetFollowNodeAreas();
-                areaIds.CopyTo(currentAreaIds);
+                UpdateCurrentAreas();
             }
 
         }
 
         public override void _Process(float delta)
         {
-            if (!Engine.EditorHint)
+            if (Engine.EditorHint) { return; }
+            camera.Position = followNode.Position;
+            foreach (int id in currentAreaIds)
             {
-                camera.Position = followNode.Position;
-                foreach (int id in currentAreaIds)
+                if (followNode.Position < GetAreaById(id).Position || followNode.Position > GetAreaById(id).End)
                 {
-                    if (followNode.Position < GetAreaById(id).Position || followNode.Position > GetAreaById(id).End)
-                    {
-                        List<int> areaIds = GetFollowNodeAreas();
-                        areaIds.CopyTo(currentAreaIds);
-                        return;
-                    }
+                    UpdateCurrentAreas();
+                    return;
                 }
+            }
+            if (currentAreaIds.Length == 0)
+            {
+                UpdateCurrentAreas();
             }
         }
 
@@ -111,7 +111,7 @@ namespace JumpRunPlugin
             followNode = (Node2D)args.NewCurrentHero;
         }
 
-        private List<int> GetFollowNodeAreas()
+        private void UpdateCurrentAreas()
         {
             List<int> rectIds = new List<int>();
             Vector2 point = followNode.Position;
@@ -123,8 +123,10 @@ namespace JumpRunPlugin
                     rectIds.Add(i);
                 }
             }
-
-            return rectIds;
+            if (rectIds.Count == 0) { return; }
+            int[] touchedRects = new int[rectIds.Count];
+            rectIds.CopyTo(touchedRects);
+            currentAreaIds = touchedRects;
         }
 
         public override string ToString()
