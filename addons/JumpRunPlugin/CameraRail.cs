@@ -83,11 +83,12 @@ namespace JumpRunPlugin
 
         private void SetCurrentArea(int id, bool isCurrent = true)
         {
-            if (isCurrent && !areas.Contains(id))
+            if (isCurrent && !currentAreaIds.Contains(id))
             {
+                GD.Print($"Added {id}");
                 currentAreaIds.Add(id);
                 Rect2 area = GetAreaById(id);
-                if (areas.Count == 1)
+                if (currentAreaIds.Count == 1)
                 {
                     camera.LimitLeft = (int)area.Position.x;
                     camera.LimitTop = (int)area.Position.y;
@@ -103,8 +104,9 @@ namespace JumpRunPlugin
                 }
                 return;
             }
-            if (!isCurrent && areas.Contains(id))
+            if (!isCurrent && currentAreaIds.Contains(id))
             {
+                GD.Print($"Removed {id}");
                 currentAreaIds.Remove(id);
                 if (areas.Count == 0) { return; }
                 Rect2 firstArea = GetAreaById(currentAreaIds[0]);
