@@ -17,7 +17,7 @@ namespace JumpRunPlugin
         private Camera2D camera;
         private Node2D followNode;
         private int currentlySelectedAreaId = -1;
-        private int[] _currentAreaIds = { };
+        private List<int> currentAreaIds = new List<int>();
 
         public int CurrentlySelectedAreaId
         {
@@ -26,29 +26,6 @@ namespace JumpRunPlugin
             {
                 currentlySelectedAreaId = value;
                 Update();
-            }
-        }
-
-        private int[] currentAreaIds
-        {
-            get => _currentAreaIds;
-            set
-            {
-                _currentAreaIds = value;
-                if (_currentAreaIds.Length == 0) { return; }
-                Rect2 firstArea = GetAreaById(value[0]);
-                camera.LimitLeft = (int)firstArea.Position.x;
-                camera.LimitTop = (int)firstArea.Position.y;
-                camera.LimitRight = (int)firstArea.End.x;
-                camera.LimitBottom = (int)firstArea.End.y;
-                for (int i = 1; i < value.Length; i++)
-                {
-                    Rect2 area = GetAreaById(value[i]);
-                    camera.LimitLeft = Mathf.Min((int)area.Position.x, camera.LimitLeft);
-                    camera.LimitTop = Mathf.Min((int)area.Position.y, camera.LimitTop);
-                    camera.LimitRight = Mathf.Max((int)area.End.x, camera.LimitRight);
-                    camera.LimitBottom = Mathf.Max((int)area.End.y, camera.LimitBottom);
-                }
             }
         }
 
@@ -83,7 +60,6 @@ namespace JumpRunPlugin
                 {
                     hero.HRef.NewCurrentHeroSet += OnHeroChanged;
                 }
-                UpdateCurrentAreas();
             }
 
         }
@@ -92,17 +68,11 @@ namespace JumpRunPlugin
         {
             if (Engine.EditorHint) { return; }
             camera.Position = followNode.Position;
-            foreach (int id in currentAreaIds)
+            for (int i = 0; i < areas.Count; i++)
             {
-                if (followNode.Position < GetAreaById(id).Position || followNode.Position > GetAreaById(id).End)
-                {
-                    UpdateCurrentAreas();
-                    return;
-                }
-            }
-            if (currentAreaIds.Length == 0)
-            {
-                UpdateCurrentAreas();
+                Rect2 area = GetAreaById(i);
+                bool isInside = followNode.Position >= area.Position && followNode.Position <= area.End;
+                SetCurrentArea(i, isInside);
             }
         }
 
@@ -111,22 +81,46 @@ namespace JumpRunPlugin
             followNode = (Node2D)args.NewCurrentHero;
         }
 
-        private void UpdateCurrentAreas()
+        private void SetCurrentArea(int id, bool isCurrent = true)
         {
-            List<int> rectIds = new List<int>();
-            Vector2 point = followNode.Position;
-
-            for (int i = 0; i < areas.Count; i++)
+            if (isCurrent && !areas.Contains(id))
             {
-                if (point >= GetAreaById(i).Position && point <= GetAreaById(i).End)
+                currentAreaIds.Add(id);
+                Rect2 area = GetAreaById(id);
+                if (areas.Count == 1)
                 {
-                    rectIds.Add(i);
+                    camera.LimitLeft = (int)area.Position.x;
+                    camera.LimitTop = (int)area.Position.y;
+                    camera.LimitRight = (int)area.End.x;
+                    camera.LimitBottom = (int)area.End.y;
+                }
+                else
+                {
+                    camera.LimitLeft = Mathf.Min(camera.LimitLeft, (int)area.Position.x);
+                    camera.LimitTop = Mathf.Min(camera.LimitTop, (int)area.Position.y);
+                    camera.LimitRight = Mathf.Max(camera.LimitRight, (int)area.End.x);
+                    camera.LimitBottom = Mathf.Max(camera.LimitBottom, (int)area.End.y);
+                }
+                return;
+            }
+            if (!isCurrent && areas.Contains(id))
+            {
+                currentAreaIds.Remove(id);
+                if (areas.Count == 0) { return; }
+                Rect2 firstArea = GetAreaById(currentAreaIds[0]);
+                camera.LimitLeft = (int)firstArea.Position.x;
+                camera.LimitTop = (int)firstArea.Position.y;
+                camera.LimitRight = (int)firstArea.End.x;
+                camera.LimitBottom = (int)firstArea.End.y;
+                for (int i = 1; i < currentAreaIds.Count; i++)
+                {
+                    Rect2 area = GetAreaById(i);
+                    camera.LimitLeft = Mathf.Min(camera.LimitLeft, (int)area.Position.x);
+                    camera.LimitTop = Mathf.Min(camera.LimitTop, (int)area.Position.y);
+                    camera.LimitRight = Mathf.Max(camera.LimitRight, (int)area.End.x);
+                    camera.LimitBottom = Mathf.Max(camera.LimitBottom, (int)area.End.y);
                 }
             }
-            if (rectIds.Count == 0) { return; }
-            int[] touchedRects = new int[rectIds.Count];
-            rectIds.CopyTo(touchedRects);
-            currentAreaIds = touchedRects;
         }
 
         public override string ToString()
