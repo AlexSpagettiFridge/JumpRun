@@ -10,6 +10,7 @@ namespace JumpRun.Scr.GameWorld
         public Vector2 Momentum;
         protected float airTime = 0, gravityMultiplier = 1;
         protected float friction = 700, maxSpeed = 120, overFriction = 450;
+        private const int wallClimbPixels = 10;
 
         public override void _PhysicsProcess(float delta)
         {
@@ -17,6 +18,16 @@ namespace JumpRun.Scr.GameWorld
             if (IsOnCeiling())
             {
                 Momentum.y = Mathf.Max(0, Momentum.y);
+            }
+            if (IsOnWall())
+            {
+                if (MoveAndCollide(new Vector2(Momentum.x, -8), true, true, true) == null)
+                {
+                    MoveAndCollide(new Vector2(Mathf.Sign(Momentum.x), -8));
+                }else
+                {
+                    OnWallCollision();
+                }
             }
             bool isOnFloor = IsOnFloor();
             //Gravity
@@ -42,6 +53,11 @@ namespace JumpRun.Scr.GameWorld
             {
                 Momentum.x = Util.CalculateFriction(Momentum.x, 0, Mathf.Abs(Momentum.x) / maxSpeed * overFriction * delta);
             }
+        }
+
+        virtual protected void OnWallCollision()
+        {
+            Momentum.x = 0;
         }
 
 

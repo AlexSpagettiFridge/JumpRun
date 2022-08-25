@@ -49,18 +49,6 @@ namespace JumpRun.Scr.GameWorld.Hero
         {
             base._PhysicsProcess(delta);
             float moveDir = Input.GetAxis("gm_left", "gm_right");
-
-            if (IsOnWall())
-            {
-                if (isSpinning)
-                {
-                    Momentum.x *= -0.8f;
-                }
-                else
-                {
-                    Momentum.x = 0;
-                }
-            }
             bool isOnFloor = IsOnFloor();
 
             //Jumping/Punching
@@ -145,6 +133,17 @@ namespace JumpRun.Scr.GameWorld.Hero
             }
         }
 
+        protected override void OnWallCollision()
+        {
+            if (isSpinning)
+            {
+                Momentum.x *= -0.8f;
+            }
+            else
+            {
+                Momentum.x = 0;
+            }
+        }
 
     }
 }
