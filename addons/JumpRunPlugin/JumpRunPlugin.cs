@@ -18,10 +18,16 @@ namespace JumpRunPlugin
         public override void _EnterTree()
         {
             Script cameraRailScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/CameraRail.cs");
+            Script dialogSciptScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/Dialog/DialogScript.cs");
+            Script dialogElementScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/Dialog/DialogElement.cs");
+            Script dialogCharacterScript = ResourceLoader.Load<Script>("res://addons/JumpRunPlugin/Dialog/DialogCharacter.cs");
             Texture cameraRailIcon = ResourceLoader.Load<Texture>("res://Gfx/Icons/CameraRailIcon.svg");
             camerarailInspectorPlugin = new CamerarailInspectorPlugin(this);
             AddInspectorPlugin(camerarailInspectorPlugin);
             AddCustomType("CameraRail", "Node2D", cameraRailScript, cameraRailIcon);
+            AddCustomType("DialogScript", "Resource", dialogSciptScript, cameraRailIcon);
+            AddCustomType("DialogElement", "Resource", dialogElementScript, cameraRailIcon);
+            AddCustomType("DialogCharacter", "Resource", dialogCharacterScript, cameraRailIcon);
 
             GD.Print("--- JumpRunPlugin Initialized ---");
         }
@@ -30,6 +36,9 @@ namespace JumpRunPlugin
         {
             RemoveInspectorPlugin(camerarailInspectorPlugin);
             RemoveCustomType("CameraRail");
+            RemoveCustomType("DialogScript");
+            RemoveCustomType("DialogElement");
+            RemoveCustomType("DialogCharacter");
         }
 
         public override void _Process(float delta)
