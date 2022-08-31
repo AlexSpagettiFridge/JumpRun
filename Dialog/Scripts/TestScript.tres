@@ -13,7 +13,7 @@ SpriteFrame = 0
 [sub_resource type="Resource" id=2]
 script = ExtResource( 3 )
 Character = ExtResource( 2 )
-Text = "merry chrismas"
+Text = "merry chr"
 SpriteFrame = 0
 
 [resource]

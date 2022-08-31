@@ -1,5 +1,6 @@
 using Godot;
 using JumpRun.Scr.Misc;
+using Gictionary = Godot.Collections.Dictionary;
 
 namespace JumpRun.Scr.GameWorld
 {
@@ -19,16 +20,7 @@ namespace JumpRun.Scr.GameWorld
             {
                 Momentum.y = Mathf.Max(0, Momentum.y);
             }
-            if (IsOnWall())
-            {
-                if (MoveAndCollide(new Vector2(Momentum.x, -8), true, true, true) == null)
-                {
-                    MoveAndCollide(new Vector2(Mathf.Sign(Momentum.x), -8));
-                }else
-                {
-                    OnWallCollision();
-                }
-            }
+            if (IsOnWall()) { HitWall(); }
             bool isOnFloor = IsOnFloor();
             //Gravity
             if (!isOnFloor)
@@ -60,6 +52,23 @@ namespace JumpRun.Scr.GameWorld
             Momentum.x = 0;
         }
 
-
+        private void HitWall()
+        {
+            if (Momentum.y > 0)
+            {
+                if (MoveAndCollide(new Vector2(0, -wallClimbPixels)) == null)
+                {
+                    KinematicCollision2D collision = MoveAndCollide(new Vector2(Mathf.Sign(Momentum.x), 0), true, true, true);
+                    if (collision == null)
+                    {
+                        MoveAndCollide(new Vector2(Mathf.Sign(Momentum.x), 0));
+                        MoveAndCollide(new Vector2(0, wallClimbPixels));
+                        return;
+                    }
+                }
+                MoveAndCollide(new Vector2(0, wallClimbPixels));
+            }
+            OnWallCollision();
+        }
     }
 }

@@ -13,7 +13,6 @@
 [ext_resource path="res://Dialog/Scripts/TestScript.tres" type="Resource" id=11]
 
 [sub_resource type="RectangleShape2D" id=16]
-extents = Vector2( 51.5, 56 )
 
 [sub_resource type="AtlasTexture" id=15]
 atlas = ExtResource( 4 )
@@ -55,9 +54,12 @@ position = Vector2( -57, 116 )
 position = Vector2( 88, 66 )
 current = true
 zoom = Vector2( 0.4, 0.4 )
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 8.0
 
 [node name="Area2D" type="Area2D" parent="."]
-scale = Vector2( 0, 0 )
+scale = Vector2( 1e-05, 1e-05 )
 script = ExtResource( 10 )
 ReferencedScript = ExtResource( 11 )
 
