@@ -85,7 +85,6 @@ namespace JumpRunPlugin
         {
             if (isCurrent && !currentAreaIds.Contains(id))
             {
-                GD.Print($"Added {id}");
                 currentAreaIds.Add(id);
                 Rect2 area = GetAreaById(id);
                 if (currentAreaIds.Count == 1)
@@ -106,7 +105,6 @@ namespace JumpRunPlugin
             }
             if (!isCurrent && currentAreaIds.Contains(id))
             {
-                GD.Print($"Removed {id}");
                 currentAreaIds.Remove(id);
                 if (areas.Count == 0) { return; }
                 Rect2 firstArea = GetAreaById(currentAreaIds[0]);
