@@ -8,13 +8,13 @@ namespace JumpRun.Scr.GameWorld.Hero
     public class Hero : KinematicPlatformer, IHero
     {
         [Export]
-        private PackedScene psGlovjectile = null;
+        private PackedScene psThrowStuff = null;
         [Export]
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
-        private const float JumpSpeed = 220, MoveAcceleration = 1000, GloveHop = 110, CoyoteTime = 0.1f, AirControl = 0.5f
-        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50;
-        private bool didJump = false, didStop = false, didPunch = false, isSpinning = false, isStomping = false, isDucking = false;
+        private const float JumpSpeed = 220, MoveAcceleration = 1000, ThrowHop = 140, CoyoteTime = 0.1f, AirControl = 0.5f
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 120;
+        private bool didJump = false, didStop = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false;
 
         private static bool initialized = false;
         private HeroReference heroReference;
@@ -70,14 +70,14 @@ namespace JumpRun.Scr.GameWorld.Hero
                     }
                     else
                     {
-                        if (!didPunch)
+                        if (!didThrow)
                         {
-                            isSpinning = true;
-                            Momentum.y = Mathf.Min(-GloveHop, Momentum.y);
-                            Glovjectile glove = psGlovjectile.Instance<Glovjectile>();
-                            GetParent().AddChild(glove);
-                            glove.Position = Position + new Vector2(0, 24);
-                            didPunch = true;
+                            Momentum.y = Mathf.Min(-ThrowHop, Momentum.y);
+                            ThrowStuff throwObject = psThrowStuff.Instance<ThrowStuff>();
+                            GetParent().AddChild(throwObject);
+                            throwObject.Position = Position + new Vector2(0, 8);
+                            throwObject.Momentum = new Vector2(0,ThrowObjectSpeed); 
+                            didThrow = true;
                         }
                     }
                 }
@@ -123,7 +123,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         {
             didJump = false;
             didStop = false;
-            didPunch = false;
+            didThrow = false;
             isSpinning = false;
             if (isStomping)
             {
