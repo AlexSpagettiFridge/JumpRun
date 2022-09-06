@@ -13,13 +13,26 @@ namespace JumpRun.Scr.GameWorld.Hero
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
         private const float JumpSpeed = 220, MoveAcceleration = 1000, ThrowHop = 140, CoyoteTime = 0.1f, AirControl = 0.5f
-        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 120;
-        private bool didJump = false, didStop = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false;
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 120,
+        AimHoldTime = 0.25f, AimSpeed = 3.5f, AimMaxDegrees = 80, MaxAimFloatTime = 2;
+        private bool didJump = false, didStop = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false, isAiming = false;
 
         private static bool initialized = false;
         private HeroReference heroReference;
+        private float aimTime;
         public HeroReference HRef { get => heroReference; set => heroReference = value; }
         public event EventHandler<RegisterCurrentHeroArgs> SetNewCurrentHero;
+        public float? AimAngle
+        {
+            get
+            {
+                if (aimTime <= AimHoldTime)
+                {
+                    return null;
+                }
+                return Mathf.Deg2Rad(Mathf.Sin((aimTime - AimHoldTime) * AimSpeed) * AimMaxDegrees);
+            }
+        }
 
         public Hero()
         {
@@ -70,17 +83,36 @@ namespace JumpRun.Scr.GameWorld.Hero
                     }
                     else
                     {
-                        if (!didThrow)
+                        if (!didThrow && !isAiming)
                         {
+                            isAiming = true;
                             Momentum.y = Mathf.Min(-ThrowHop, Momentum.y);
-                            ThrowStuff throwObject = psThrowStuff.Instance<ThrowStuff>();
-                            GetParent().AddChild(throwObject);
-                            throwObject.Position = Position + new Vector2(0, 8);
-                            throwObject.Momentum = new Vector2(0,ThrowObjectSpeed); 
-                            didThrow = true;
                         }
                     }
                 }
+            }
+            if (isAiming)
+            {
+                aimTime += delta;
+                if (aimTime>AimHoldTime)
+                {
+                    IsFrozen = true;
+                }
+                if (Input.IsActionJustReleased("gm_jump") || aimTime > MaxAimFloatTime)
+                {
+                    float throwAngle = AimAngle == null ? 0 : (float)AimAngle;
+
+                    Momentum.y = Mathf.Min(-ThrowHop, Momentum.y);
+                    ThrowStuff throwObject = psThrowStuff.Instance<ThrowStuff>();
+                    GetParent().AddChild(throwObject);
+                    throwObject.Position = Position + new Vector2(0, 8);
+                    throwObject.Momentum = new Vector2(0, ThrowObjectSpeed).Rotated(throwAngle);
+                    didThrow = true;
+                    IsFrozen = false;
+                    isAiming = false;
+                    aimTime = 0;
+                }
+
             }
             if (Input.IsActionJustReleased("gm_jump") && Momentum.y < 0 && !didStop)
             {
@@ -111,7 +143,7 @@ namespace JumpRun.Scr.GameWorld.Hero
             }
             gravityMultiplier = (isSpinning ? 0.5f : 1);
             //Horizontal Movement
-            if (!isDucking)
+            if (!isDucking && !IsFrozen)
             {
                 Momentum.x += moveDir * MoveAcceleration * delta * (isOnFloor ? 1 : isSpinning ? SpinControl : AirControl);
             }

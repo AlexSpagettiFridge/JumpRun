@@ -9,12 +9,14 @@ namespace JumpRun.Scr.GameWorld
         [Signal]
         public delegate void JustLanded();
         public Vector2 Momentum;
+        public bool IsFrozen = false;
         protected float airTime = 0, gravityMultiplier = 1;
         protected float friction = 700, maxSpeed = 120, overFriction = 450;
         private const int wallClimbPixels = 10;
 
         public override void _PhysicsProcess(float delta)
         {
+            if (IsFrozen) { return; }
             MoveAndSlide(Momentum, new Vector2(0, -1));
             if (IsOnCeiling())
             {
