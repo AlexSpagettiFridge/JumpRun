@@ -12,10 +12,10 @@ namespace JumpRun.Scr.GameWorld.Hero
         [Export]
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
-        private const float JumpSpeed = 220, MoveAcceleration = 1000, ThrowHop = 140, CoyoteTime = 0.1f, AirControl = 0.5f
+        private const float JumpSpeed = 220, MoveAcceleration = 1000, ThrowHop = 200, CoyoteTime = 0.1f, AirControl = 0.5f
         , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 120,
         AimHoldTime = 0.25f, AimSpeed = 3.5f, AimMaxDegrees = 80, MaxAimFloatTime = 2;
-        private bool didJump = false, didStop = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false, isAiming = false;
+        private bool didJump = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false, isAiming = false;
 
         private static bool initialized = false;
         private HeroReference heroReference;
@@ -86,7 +86,6 @@ namespace JumpRun.Scr.GameWorld.Hero
                         if (!didThrow && !isAiming)
                         {
                             isAiming = true;
-                            Momentum.y = Mathf.Min(-ThrowHop, Momentum.y);
                         }
                     }
                 }
@@ -113,11 +112,6 @@ namespace JumpRun.Scr.GameWorld.Hero
                     aimTime = 0;
                 }
 
-            }
-            if (Input.IsActionJustReleased("gm_jump") && Momentum.y < 0 && !didStop)
-            {
-                Momentum.y /= 2;
-                didStop = true;
             }
             //Stomping/Ducking
             if (Input.IsActionJustPressed("gm_duck"))
@@ -154,7 +148,6 @@ namespace JumpRun.Scr.GameWorld.Hero
         public void OnJustLanded()
         {
             didJump = false;
-            didStop = false;
             didThrow = false;
             isSpinning = false;
             if (isStomping)
