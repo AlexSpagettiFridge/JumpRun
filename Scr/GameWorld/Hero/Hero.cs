@@ -93,7 +93,7 @@ namespace JumpRun.Scr.GameWorld.Hero
             if (isAiming)
             {
                 aimTime += delta;
-                if (aimTime>AimHoldTime)
+                if (aimTime > AimHoldTime)
                 {
                     IsFrozen = true;
                 }
@@ -118,11 +118,9 @@ namespace JumpRun.Scr.GameWorld.Hero
             {
                 if (airTime > CoyoteTime)
                 {
-                    if (!isSpinning)
-                    {
-                        isStomping = true;
-                        Momentum.y = Mathf.Max(Momentum.y, StompSpeed);
-                    }
+                    isStomping = true;
+                    Momentum.y = Mathf.Max(Momentum.y, StompSpeed);
+                    isSpinning = false;
                 }
                 else
                 {
