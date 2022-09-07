@@ -13,8 +13,8 @@ namespace JumpRun.Scr.GameWorld.Hero
         private NodePath npHeroSprite = null;
         private HeroSprite heroSprite;
         private const float JumpSpeed = 220, MoveAcceleration = 1000, ThrowHop = 200, CoyoteTime = 0.1f, AirControl = 0.5f
-        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 120,
-        AimHoldTime = 0.25f, AimSpeed = 3.5f, AimMaxDegrees = 80, MaxAimFloatTime = 2;
+        , SpinControl = 0.1f, StompSpeed = 440, StompRicochet = 0.33f, DuckDash = 175, UnduckHop = 50, ThrowObjectSpeed = 180,
+        AimHoldTime = 0.25f, AimSpeed = 3.5f, AimMaxDegrees = 80, MaxAimFloatTime = 2.5f;
         private bool didJump = false, didThrow = false, isSpinning = false, isStomping = false, isDucking = false, isAiming = false;
 
         private static bool initialized = false;
@@ -104,7 +104,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                     Momentum.y = Mathf.Min(-ThrowHop, Momentum.y);
                     ThrowStuff throwObject = psThrowStuff.Instance<ThrowStuff>();
                     GetParent().AddChild(throwObject);
-                    throwObject.Position = Position + new Vector2(0, 8);
+                    throwObject.Position = Position + new Vector2(0, 4);
                     throwObject.Momentum = new Vector2(0, ThrowObjectSpeed).Rotated(throwAngle);
                     didThrow = true;
                     IsFrozen = false;

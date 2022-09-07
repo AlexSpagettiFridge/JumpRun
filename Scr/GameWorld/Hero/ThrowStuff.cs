@@ -15,7 +15,7 @@ namespace JumpRun.Scr.GameWorld.Hero
         public override void _Ready()
         {
             sprite = GetNode<AnimatedSprite>(npSprite);
-            rotationSpeed = Mathf.Deg2Rad(new Random().Next(-90, 90));
+            rotationSpeed = Mathf.Deg2Rad(new Random().Next(-360, 360));
             sprite.Frame = new Random().Next(0, sprite.Frames.GetFrameCount(sprite.Animation));
         }
         public override void _Process(float delta)
@@ -27,6 +27,7 @@ namespace JumpRun.Scr.GameWorld.Hero
                 FallingSprite fallingSprite = new FallingSprite();
                 fallingSprite.Texture = sprite.Frames.GetFrame(sprite.Animation, sprite.Frame);
                 fallingSprite.Transform = Transform;
+                fallingSprite.Rotation = sprite.Rotation;
                 fallingSprite.RotationSpeed = Mathf.Deg2Rad(new Random().Next(-720, 720));
                 fallingSprite.Momentum = Momentum.Bounce(collision.Normal);
                 GetParent().AddChild(fallingSprite);
