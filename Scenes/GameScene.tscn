@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://addons/JumpRunPlugin/CameraRail.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Entities/Hero/Hero.tscn" type="PackedScene" id=2]
@@ -11,6 +11,7 @@
 [ext_resource path="res://Scr/Interface/Gui/DialogBox.cs" type="Script" id=9]
 [ext_resource path="res://Scr/GameWorld/Characters/ScriptActivatorArea.cs" type="Script" id=10]
 [ext_resource path="res://Dialog/Scripts/TestScript.tres" type="Resource" id=11]
+[ext_resource path="res://Scenes/Characters/SmackoBird.tscn" type="PackedScene" id=12]
 
 [sub_resource type="RectangleShape2D" id=16]
 
@@ -132,3 +133,6 @@ bbcode_enabled = true
 text = "Lorem Ipsum"
 
 [node name="DialogTimer" type="Timer" parent="GuiLayer/GuiControl/DialogBox"]
+
+[node name="SmackoBird" parent="." instance=ExtResource( 12 )]
+position = Vector2( 530, 90 )

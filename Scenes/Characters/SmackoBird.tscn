@@ -19,6 +19,7 @@ animations = [ {
 } ]
 
 [node name="SmackoBird" type="Node2D"]
+z_index = -10
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 3 )

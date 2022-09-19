@@ -5,6 +5,8 @@ namespace JumpRun.Scr.GameWorld
 {
     public class GameController : Node2D
     {
+        [Signal]
+        public delegate void CharacterSpeaks(string text);
         [Export]
         private NodePath npGui;
         private GuiController gui;
