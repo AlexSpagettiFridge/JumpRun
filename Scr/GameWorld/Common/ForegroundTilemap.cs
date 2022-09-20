@@ -1,6 +1,6 @@
 using Godot;
 
-namespace JumpRun.Scr.GameWorld
+namespace JumpRun.Scr.GameWorld.Common
 {
     public class ForegroundTilemap : TileMap
     {

@@ -1,4 +1,5 @@
 using Godot;
+using JumpRun.Scr.GameWorld.Common;
 using JumpRunPlugin.Dialog;
 
 namespace JumpRun.Scr.GameWorld
@@ -10,12 +11,7 @@ namespace JumpRun.Scr.GameWorld
 
         public override void _EnterTree()
         {
-            GameController.Current.Connect(nameof(GameController.CharacterSpeaks), this, nameof(OnCharacterSpeaks));
-        }
-
-        private void OnCharacterSpeaks(string text)
-        {
-
+            AddToGroup("speechBubbleMarker");
         }
 
     }

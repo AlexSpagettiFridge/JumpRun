@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using JumpRun.Scr.GameWorld.Common;
 using JumpRun.Scr.GameWorld.Hero;
 
 namespace JumpRun.Scr.GameWorld.Objects

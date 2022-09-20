@@ -1,5 +1,5 @@
 using Godot;
-using JumpRun.Scr.GameWorld;
+using JumpRun.Scr.GameWorld.Common;
 using JumpRun.Scr.Interface.Gui;
 
 namespace JumpRunPlugin.Dialog
@@ -28,9 +28,9 @@ namespace JumpRunPlugin.Dialog
 
         public void NextElement()
         {
-            GameController.Current.Gui.GetDialogBox().ApplyDialogElement(followedScript.Elements[elementIndex]);
+            GameController.Current.AddChild(new SpeechBubble(followedScript.Elements[elementIndex]));
             elementIndex++;
-            if (elementIndex>followedScript.Elements.Length)
+            if (elementIndex > followedScript.Elements.Length)
             {
                 QueueFree();
             }

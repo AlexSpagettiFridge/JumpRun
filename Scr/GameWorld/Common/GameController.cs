@@ -1,17 +1,19 @@
 using Godot;
 using JumpRun.Scr.Interface.Gui;
 
-namespace JumpRun.Scr.GameWorld
+namespace JumpRun.Scr.GameWorld.Common
 {
     public class GameController : Node2D
     {
         [Signal]
         public delegate void CharacterSpeaks(string text);
         [Export]
-        private NodePath npGui;
+        private NodePath npGui,npCamera;
         private GuiController gui;
+        private GameCamera camera;
 
         public GuiController Gui => gui;
+        public GameCamera Camera => camera;
 
         public static GameController Current => current;
         private static GameController current;
@@ -26,6 +28,7 @@ namespace JumpRun.Scr.GameWorld
         public override void _Ready()
         {
             gui = GetNode<GuiController>(npGui);
+            camera = GetNode<GameCamera>(npCamera);
         }
 
         public void SetLevelCrunchyAmount(int amount) 

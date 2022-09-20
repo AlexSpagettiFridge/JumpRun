@@ -1,19 +1,21 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/JumpRunPlugin/CameraRail.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Entities/Hero/Hero.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Gfx/Sprites/TileMap/GameTiles.tres" type="TileSet" id=3]
 [ext_resource path="res://Gfx/Sprites/Crunchy/Crunchy.png" type="Texture" id=4]
-[ext_resource path="res://Scr/GameWorld/ForegroundTilemap.cs" type="Script" id=5]
-[ext_resource path="res://Scr/GameWorld/GameController.cs" type="Script" id=6]
+[ext_resource path="res://Scr/GameWorld/Common/ForegroundTilemap.cs" type="Script" id=5]
+[ext_resource path="res://Scr/GameWorld/Common/GameController.cs" type="Script" id=6]
 [ext_resource path="res://Scr/Interface/Gui/GuiController.cs" type="Script" id=7]
 [ext_resource path="res://icon.png" type="Texture" id=8]
 [ext_resource path="res://Scr/Interface/Gui/DialogBox.cs" type="Script" id=9]
 [ext_resource path="res://Scr/GameWorld/Characters/ScriptActivatorArea.cs" type="Script" id=10]
 [ext_resource path="res://Dialog/Scripts/TestScript.tres" type="Resource" id=11]
 [ext_resource path="res://Scenes/Characters/SmackoBird.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Scr/GameWorld/Common/GameCamera.cs" type="Script" id=13]
 
 [sub_resource type="RectangleShape2D" id=16]
+extents = Vector2( 15.5, 24 )
 
 [sub_resource type="AtlasTexture" id=15]
 atlas = ExtResource( 4 )
@@ -22,10 +24,11 @@ region = Rect2( 0, 0, 16, 16 )
 [node name="GameScene" type="Node2D"]
 script = ExtResource( 6 )
 npGui = NodePath("GuiLayer/GuiControl")
+npCamera = NodePath("GameCamera")
 
 [node name="CameraRail" type="Node2D" parent="."]
 script = ExtResource( 1 )
-npCamera = NodePath("../Camera2D")
+npCamera = NodePath("../GameCamera")
 npFollowNode = NodePath("../Hero")
 areas = [ Rect2( -80, 0, 768, 320 ), Rect2( 80, -352, 928, 688 ) ]
 
@@ -51,21 +54,22 @@ script = ExtResource( 5 )
 [node name="Hero" parent="." instance=ExtResource( 2 )]
 position = Vector2( -57, 116 )
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="GameCamera" type="Camera2D" parent="."]
 position = Vector2( 88, 66 )
 current = true
 zoom = Vector2( 0.4, 0.4 )
 limit_smoothed = true
 smoothing_enabled = true
 smoothing_speed = 8.0
+script = ExtResource( 13 )
 
 [node name="Area2D" type="Area2D" parent="."]
-scale = Vector2( 1e-05, 1e-05 )
+position = Vector2( 393, 134 )
 script = ExtResource( 10 )
 ReferencedScript = ExtResource( 11 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2( -0.5, 23 )
+position = Vector2( -1.5, -14 )
 shape = SubResource( 16 )
 
 [node name="GuiLayer" type="CanvasLayer" parent="."]
